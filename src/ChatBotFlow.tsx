@@ -18,8 +18,6 @@ import MessageNode from "./components/MessageNode";
 import { initialEdges, initialNodes } from "./constants";
 import Navbar from "./components/Navbar";
 import UpdateMessageNode from "./components/UpdateMessageNode";
-import { useRecoilValue } from "recoil";
-import { nodesState } from "./store/nodesState";
 import toast from "react-hot-toast";
 
 // Define the custom node types for React Flow
@@ -36,9 +34,6 @@ export default function ChatBotFlow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes); // Manage state for nodes
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges); // Manage state for edges
   const [reactFlowInstance, setReactFlowInstance] = useState(null); // Store the React Flow instance
-
-  // Retrieve the nodes state from Recoil
-  const nodesData = useRecoilValue(nodesState);
 
   const [showNodePanel, setShowNodePanel] = useState(true); // State to toggle between NodesPanel and UpdateMessageNode
   const [clickedNodeId, setClickedNodeId] = useState(); // State to store the ID of the clicked node
@@ -111,6 +106,7 @@ export default function ChatBotFlow() {
 
   // Function to handle node click event
   function onNodeClick(e, val) {
+    console.log(e);
     setShowNodePanel(false);
     setClickedNodeId(val.id);
     setClickedNodeValue(val.data.msg);
