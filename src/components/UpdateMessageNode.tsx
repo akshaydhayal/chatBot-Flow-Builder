@@ -1,16 +1,10 @@
-import React, { useState } from 'react'
-import { useNodesState } from 'reactflow';
-import { initialNodes } from '../constants';
-import { useSetRecoilState } from 'recoil';
-import { nodesState } from '../store/nodesState';
+import  { useState } from 'react'
 import { FaArrowLeft } from "react-icons/fa";
 
 export default function UpdateMessageNode({clickedNodeValue,clickedNodeId,nodes,
     setNodes,setShowNodePanel}) {
         console.log("clicked id in updateMsg: ",clickedNodeId);
         console.log("clicked node val in updateMsg: ",clickedNodeValue);
-    const setNodesData=useSetRecoilState(nodesState);
-    // const [nodes,setNodess,onNodesChange]=useNodesState(initialNodes);
     const [nodeUpdatedValue,setNodeUpdatedValue]=useState(clickedNodeValue);
 
     async function handleNodeChange(val,id){
@@ -26,11 +20,6 @@ export default function UpdateMessageNode({clickedNodeValue,clickedNodeId,nodes,
         
         // await setNodesData(res);
         setNodes(res);
-        // await new Promise((ress,rej)=>{
-        //     setTimeout(()=>{
-        //         ress("res after 2 sec");
-        //     },2000);
-        // })
     }
   return (
     <div className="border border-slate-400 py-2">
@@ -50,7 +39,7 @@ export default function UpdateMessageNode({clickedNodeValue,clickedNodeId,nodes,
           type="text"
           value={nodeUpdatedValue}
         //   value={clickedNodeValue}
-          onClick={(e)=>{setNodeUpdatedValue(clickedNodeValue)}}
+          onClick={()=>{setNodeUpdatedValue(clickedNodeValue)}}
           onChange={(e) => {
             setNodeUpdatedValue(e.target.value);
             handleNodeChange(e.target.value, clickedNodeId);

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useSaveFlow } from '../hooks/useSaveFlow';
 
 export default function Navbar({nodes,edges}) {
