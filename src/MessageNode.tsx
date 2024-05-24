@@ -3,7 +3,6 @@ import { IoLogoWhatsapp } from "react-icons/io";
 import { BsChatText } from "react-icons/bs";
 
 export default function MessageNode({data:{msg}}:NodeProps<{msg:string}>) {
-    // const {setNodes}=useReactFlow();
   return (
     <div className="w-56 border rounded-md shadow-lg">
       <div className="bg-[#b4f4e4] flex justify-between items-center px-2">
@@ -18,9 +17,7 @@ export default function MessageNode({data:{msg}}:NodeProps<{msg:string}>) {
       <div>
         <p className='px-4 p-2 text-slate-600 font-medium'>{msg}</p>
       </div>
-      {/* <p className='border p-1 px-2' onClick={()=>{
-        setNodes(prev=>prev.filter(n=>n.id!==id));
-      }}>X</p> */}
+      
       <Handle type='target' position={Position.Left} />
       <Handle type='source' position={Position.Right}/>
     </div>

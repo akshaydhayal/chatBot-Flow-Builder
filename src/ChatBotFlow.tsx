@@ -23,15 +23,6 @@ import { useRecoilValue } from "recoil";
 import { nodesState } from "./store/nodesState";
 import toast from "react-hot-toast";
 
-// const initialNodes = [
-//   {
-//     id: "1",
-//     type: "input",
-//     data: { label: "input node" },
-//     position: { x: 250, y: 5 },
-//   },
-// ];
-
 const nodeTypes={
     'MessageNodeCreate':MessageNodeCreate,
     'MessageNode':MessageNode
@@ -49,14 +40,6 @@ export default function ChatBotFlow(){
   const nodesData=useRecoilValue(nodesState);
   console.log(nodesData);
   console.log(nodes);
-  // console.log(nodesData.length);
-  
-    // if(nodesData==false){
-  //   if(nodesData && nodesData.length>0){
-  //     useEffect(()=>{
-  //     setNodes(nodesData);
-  //   },[nodesData,nodes])
-  // }
 
   const [showNodePanel,setShowNodePanel]=useState(true);
   const [clickedNodeId,setClickedNodeId]=useState();
@@ -72,7 +55,6 @@ export default function ChatBotFlow(){
       toast.error("Only 1 edge is allowed from source handle.", {
         style: { backgroundColor: "#e3c1c2", fontWeight: "500" },
       });
-      // alert("Only one connection is allowed from a source handle.");
       return;
     }
 
@@ -109,9 +91,6 @@ export default function ChatBotFlow(){
         return;
       }
 
-      // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -136,11 +115,9 @@ export default function ChatBotFlow(){
     setClickedNodeValue(val.data.msg);
   }
   return (
-    // <div className="dndflow">
     <div className="w-screen h-screen">
       <Navbar nodes={nodes} edges={edges}/>
       <ReactFlowProvider>
-        {/* <div className="reactflow-wrapper" ref={reactFlowWrapper}> */}
         <div className="w-screen h-[90vh] flex">
           <div className="w-3/4 h-full border-r-2 border-slate-200" ref={reactFlowWrapper}>
             <ReactFlow
@@ -165,8 +142,6 @@ export default function ChatBotFlow(){
               <UpdateMessageNode clickedNodeValue={clickedNodeValue} clickedNodeId={clickedNodeId}
                setNodes={setNodes} nodes={nodes} setShowNodePanel={setShowNodePanel}/>
             }
-            {/* <NodesPanel /> */}
-            {/* <UpdateMessageNode/> */}
           </div>
         </div>
       </ReactFlowProvider>

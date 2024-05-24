@@ -1,11 +1,15 @@
-import  { useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { FaArrowLeft } from "react-icons/fa";
 
 export default function UpdateMessageNode({clickedNodeValue,clickedNodeId,nodes,
     setNodes,setShowNodePanel}) {
         console.log("clicked id in updateMsg: ",clickedNodeId);
         console.log("clicked node val in updateMsg: ",clickedNodeValue);
+
     const [nodeUpdatedValue,setNodeUpdatedValue]=useState(clickedNodeValue);
+    useEffect(()=>{
+        setNodeUpdatedValue(clickedNodeValue);
+    },[clickedNodeValue])
 
     async function handleNodeChange(val,id){
         console.log(val);
@@ -16,9 +20,6 @@ export default function UpdateMessageNode({clickedNodeValue,clickedNodeId,nodes,
             return n;
         });
         console.log(res);
-        // setNodes(res);
-        
-        // await setNodesData(res);
         setNodes(res);
     }
   return (
@@ -35,11 +36,8 @@ export default function UpdateMessageNode({clickedNodeValue,clickedNodeId,nodes,
       <div className="px-4">
         <input
           className="border p-2 py-4 border-slate-600 rounded-lg font-medium"
-          //   type="text"  value={clickedNodeValue} onChange={(e)=>{
           type="text"
           value={nodeUpdatedValue}
-        //   value={clickedNodeValue}
-          onClick={()=>{setNodeUpdatedValue(clickedNodeValue)}}
           onChange={(e) => {
             setNodeUpdatedValue(e.target.value);
             handleNodeChange(e.target.value, clickedNodeId);
