@@ -7,14 +7,13 @@ import ReactFlow, {
   Controls,
   Connection,
   MarkerType,
+  Background,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
 import NodesPanel from "./components/NodesPanel";
-
 import "./index.css";
 import MessageNodeCreate from "./components/MessageNodeCreate";
-
 import MessageNode from "./components/MessageNode";
 import { initialEdges, initialNodes } from "./constants";
 import Navbar from "./components/Navbar";
@@ -23,70 +22,73 @@ import { useRecoilValue } from "recoil";
 import { nodesState } from "./store/nodesState";
 import toast from "react-hot-toast";
 
-const nodeTypes={
-    'MessageNodeCreate':MessageNodeCreate,
-    'MessageNode':MessageNode
-}
+// Define the custom node types for React Flow
+const nodeTypes = {
+  MessageNodeCreate: MessageNodeCreate,
+  MessageNode: MessageNode,
+};
+
 let id = 0;
-const getId = () => `dndnode_${id++}`;
+const getId = () => `dndnode_${id++}`; // Function to generate unique node IDs
 
+export default function ChatBotFlow() {
+  const reactFlowWrapper = useRef(null); // Reference to the React Flow wrapper
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes); // Manage state for nodes
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges); // Manage state for edges
+  const [reactFlowInstance, setReactFlowInstance] = useState(null); // Store the React Flow instance
 
-export default function ChatBotFlow(){
-  const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  // Retrieve the nodes state from Recoil
+  const nodesData = useRecoilValue(nodesState);
 
-  const nodesData=useRecoilValue(nodesState);
-  console.log(nodesData);
-  console.log(nodes);
+  const [showNodePanel, setShowNodePanel] = useState(true); // State to toggle between NodesPanel and UpdateMessageNode
+  const [clickedNodeId, setClickedNodeId] = useState(); // State to store the ID of the clicked node
+  const [clickedNodeValue, setClickedNodeValue] = useState(); // State to store the value of the clicked node
 
-  const [showNodePanel,setShowNodePanel]=useState(true);
-  const [clickedNodeId,setClickedNodeId]=useState();
-  const [clickedNodeValue,setClickedNodeValue]=useState();
+  // Function to handle connection of nodes with edges
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      const existingEdge = edges.find(
+        (edge) => edge.source === connection.source
+      );
 
-  const onConnect=useCallback((connection:Connection)=>{
+      // Check if there is already an edge from the source node
+      if (existingEdge) {
+        // Display error toast if there is already an edge
+        toast.error("Only 1 edge is allowed from source handle.", {
+          style: { backgroundColor: "#e3c1c2", fontWeight: "500" },
+        });
+        return;
+      }
 
-    const existingEdge = edges.find(
-      (edge) => edge.source === connection.source
-    );
+      // Create a new edge
+      const edge = {
+        ...connection,
+        id: `${edges.length + 1}`,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+        },
+      };
 
-    if (existingEdge) {
-      toast.error("Only 1 edge is allowed from source handle.", {
-        style: { backgroundColor: "#e3c1c2", fontWeight: "500" },
-      });
-      return;
-    }
+      // Add the new edge to the edges state
+      setEdges((prevEdges) => addEdge(edge, prevEdges));
+    },
+    [edges, setEdges]
+  );
 
-    const edge = {
-      ...connection,
-      id: `${edges.length + 1}`,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-      },
-    };
-    setEdges(prevEdges=>addEdge(edge,prevEdges));
-    console.log(edges);
-    
-  },[edges,setEdges]);
-
+  // Function to handle drag over event
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
 
+  // Function to handle drop event for adding new nodes
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-
       const type = event.dataTransfer.getData("application/reactflow");
-      console.log(type);
-      console.log(event.dataTransfer);
-      console.log(event);
 
-      // check if the dropped element is valid
       if (typeof type === "undefined" || !type) {
         return;
       }
@@ -99,27 +101,31 @@ export default function ChatBotFlow(){
         id: getId(),
         type,
         position,
-        data: { msg: 'Bye' },
+        data: { msg: "Bye" },
       };
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance]
+    [reactFlowInstance, setNodes]
   );
 
-  function onNodeClick(e,val){
+  // Function to handle node click event
+  function onNodeClick(e, val) {
     setShowNodePanel(false);
-    console.log(e);
-    console.log(val);
     setClickedNodeId(val.id);
     setClickedNodeValue(val.data.msg);
   }
+
   return (
     <div className="w-screen h-screen">
-      <Navbar nodes={nodes} edges={edges}/>
+      <Navbar nodes={nodes} edges={edges} /> {/* Navbar component */}
       <ReactFlowProvider>
         <div className="w-screen h-[90vh] flex">
-          <div className="w-3/4 h-full border-r-2 border-slate-200" ref={reactFlowWrapper}>
+          {/* Container for the react flow */}
+          <div
+            className="w-3/4 h-full border-r-2 border-slate-200"
+            ref={reactFlowWrapper}
+          >
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -130,24 +136,29 @@ export default function ChatBotFlow(){
               onDrop={onDrop}
               onDragOver={onDragOver}
               nodeTypes={nodeTypes}
-              onNodeClick={(e,val)=>onNodeClick(e,val)}
+              onNodeClick={(e, val) => onNodeClick(e, val)}
             >
               <Controls />
+              <Background/>
             </ReactFlow>
           </div>
 
+          {/* Container for the nodes panel and update message node */}
           <div className="w-1/4 h-full">
-            {
-              showNodePanel?<NodesPanel/>:
-              <UpdateMessageNode clickedNodeValue={clickedNodeValue} clickedNodeId={clickedNodeId}
-               setNodes={setNodes} nodes={nodes} setShowNodePanel={setShowNodePanel}/>
-            }
+            {showNodePanel ? (
+              <NodesPanel /> // Toggle between NodesPanel and UpdateMessageNode
+            ) : (
+              <UpdateMessageNode
+                clickedNodeValue={clickedNodeValue}
+                clickedNodeId={clickedNodeId}
+                setNodes={setNodes}
+                nodes={nodes}
+                setShowNodePanel={setShowNodePanel}
+              />
+            )}
           </div>
         </div>
       </ReactFlowProvider>
     </div>
   );
-};
-
-
-
+}
