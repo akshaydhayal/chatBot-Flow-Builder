@@ -15,7 +15,7 @@ import NodesPanel from "./components/NodesPanel";
 import "./index.css";
 import MessageNodeCreate from "./components/MessageNodeCreate";
 
-import MessageNode from "./MessageNode";
+import MessageNode from "./components/MessageNode";
 import { initialEdges, initialNodes } from "./constants";
 import Navbar from "./components/Navbar";
 import UpdateMessageNode from "./components/UpdateMessageNode";
