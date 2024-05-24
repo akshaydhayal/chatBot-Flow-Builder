@@ -29,21 +29,21 @@ export default function UpdateMessageNode({clickedNodeValue,clickedNodeId,nodes,
   }
   return (
     <div className="border border-slate-400 py-2">
-      <div className="flex gap-16 items-center border-b p-2 text-center border-slate-400">
+      <div className="flex items-center border-b p-2 text-center border-slate-400">
         <FaArrowLeft
           className="cursor-pointer hover:text-slate-400"
           onClick={() => {
             setShowNodePanel(true);
           }}
         />
-        <p className="font-medium text-lg">Message</p>
+        <p className="font-medium text-lg sm:px-8">Message</p>
       </div>
       <p className="text-slate-600 p-4 ">Text</p>
 
       {/* Input field to update the message value */}
       <div className="px-4">
         <input
-          className="border p-2 py-4 border-slate-600 rounded-lg font-medium"
+          className="border w-full p-2 py-4 border-slate-600 rounded-lg font-medium"
           type="text"
           value={nodeUpdatedValue}
           onChange={(e) => {
